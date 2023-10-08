@@ -1,48 +1,48 @@
-import { View, Text, ScrollView } from "react-native";
+import { Text, ScrollView, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
 import { getPokemon } from "../api/pokeapi";
-import tw from "twrnc";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Image } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import PokeCard from "../components/PokeCard";
 
 const Page = () => {
   const [pokemon, setPokemon] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const load = async () => {
       const result = await getPokemon();
       setPokemon(result);
+      setLoading(false);
     };
     load();
   }, []);
 
   return (
-    <ScrollView style={tw`w-full`}>
-      {pokemon.map((item) => (
-        <Link key={item.id} href={`/(pokemon)/${item.id}`} asChild>
-          <TouchableOpacity style={tw`w-full`}>
-            <View
-              style={tw`p-5 flex flex-row items-center justify-between w-full`}
-            >
-              <Image
-                source={{ uri: item.image }}
-                style={tw`w-[100px] h-[100px]`}
-              />
-              <Text
-                style={[
-                  tw`text-[18px] flex-1`,
-                  { textTransform: "capitalize" },
-                ]}
-              >
-                {item.name}
-              </Text>
-              <Ionicons name="chevron-forward" size={24} />
-            </View>
-          </TouchableOpacity>
-        </Link>
-      ))}
+    <ScrollView
+      contentContainerStyle={
+        loading
+          ? {
+              display: "flex",
+              flex: 1,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }
+          : null
+      }
+    >
+      {loading ? (
+        <ActivityIndicator size={60} color="#f4511e" />
+      ) : (
+        pokemon.map((item) => (
+          <PokeCard
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            image={item.image}
+          />
+        ))
+      )}
     </ScrollView>
   );
 };

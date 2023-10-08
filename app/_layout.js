@@ -18,6 +18,12 @@ const Layout = () => {
           headerTitleStyle: { fontSize: 20, fontWeight: "600" },
         }}
       />
+      <Stack.Screen
+        name="(pokemon)/[id]"
+        options={{
+          title: "",
+        }}
+      />
     </Stack>
   );
 };
